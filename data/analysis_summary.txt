@@ -1,0 +1,9 @@
+YouTube Data Analysis Summary
+Generated on: 2026-03-13 09:34:12
+
+Total Videos: 150.0
+Unique Channels: 50.0
+Average Views: 715,847
+Max Views: 12,322,708
+Average Likes: 22,932
+Average Engagement Rate: 0.0593
