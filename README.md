@@ -17,6 +17,7 @@ An end-to-end data engineering pipeline that extracts YouTube data using the You
 - [Configuration](#configuration)
 - [Pipeline Stages](#pipeline-stages)
 - [Sample Output](#sample-output)
+- [Generated Visualizations](#generated-visualizations)
 - [Data Schema](#data-schema)
 - [API Considerations](#api-considerations)
 - [Security Considerations](#security-considerations)
@@ -81,18 +82,29 @@ Edit `config.py` and add:
 mysql -u root -p < database/schema.sql
 ```
 
-### 4. Run the Pipeline
+## Quick Demo
+
+Want to see the pipeline in action? Here's what happens when you run it:
 
 ```bash
-# Run the complete pipeline
-python run_pipeline.py
-
-# Or run individual stages
+# 1. Extract YouTube data
 python scripts/extract_youtube_data.py
+# Output: "Successfully extracted 50 videos to ../data/raw/youtube_raw.csv"
+
+# 2. Transform the data
 python scripts/transform_data.py
+# Output: "Successfully transformed data. Output: 50 records saved"
+
+# 3. Load to database
 python scripts/load_to_mysql.py
+# Output: "Successfully loaded 50 records to MySQL"
+
+# 4. Generate analytics
 python scripts/analyze_data.py
+# Output: "Analysis completed successfully. Plots saved to data/plots/"
 ```
+
+**Result**: Fresh YouTube trending data with beautiful visualizations! 📊
 
 ## Project Structure
 
@@ -192,33 +204,44 @@ CREATE TABLE pipeline_logs (
 
 After running the pipeline, you'll get:
 
-### Database Records
-```
-Total videos in database: 50
-Sample videos:
-- BossMan Dlow - Motion Party (Official Music Video)... by BossMan Dlow
-  Views: 55,294, Likes: 5,555, Engagement: 0.1064
-- Malcolm in the Middle: Life's Still Unfair... by Hulu
-  Views: 1,612,859, Likes: 30,338, Engagement: 0.0201
-```
+### Sample Raw Data Structure
 
-### Analytics Summary
+The raw data extracted from YouTube API includes:
+
+| video_id | title | channel | published_at | views | likes | comments | extracted_at |
+|----------|-------|---------|--------------|-------|--------|-----------|--------------|
+| fEl_ug9VfvQ | BossMan Dlow - Motion Party (Official Music Video) | BossMan Dlow | 2026-03-12T21:30:06Z | 57,002 | 5,597 | 328 | 2026-03-13T09:31:35.634038 |
+| ABol0H2n_rc | Malcolm in the Middle: Life's Still Unfair... | Hulu | 2026-03-12T16:40:44Z | 1,623,501 | 30,475 | 2,028 | 2026-03-13T09:31:35.634090 |
+| ZZ7tgBj3r3M | Harry Styles - Everybody Wants To Rule The World... | BBCRadio1VEVO | 2026-03-12T12:01:05Z | 530,836 | 57,780 | 1,745 | 2026-03-13T09:31:35.634115 |
+
+*Full dataset available in `data/raw/youtube_raw.csv`*
+
+### Analysis Results Summary
+
 ```
-Total Videos Analyzed: 50
+YouTube Data Analysis Summary
+Generated on: 2026-03-13 09:34:12
+
+Total Videos: 150
 Unique Channels: 50
-Average Views per Video: 715,847
-Maximum Views: 12,322,708
-Average Likes per Video: 22,932
+Average Views: 715,847
+Max Views: 12,322,708
+Average Likes: 22,932
 Average Engagement Rate: 0.0593
 ```
 
-### Generated Files
-- `data/raw/youtube_raw.csv` - Raw extracted data
-- `data/processed/youtube_clean.csv` - Cleaned and transformed data
-- `data/plots/top_channels_views.png` - Top channels by views chart
-- `data/plots/engagement_distribution.png` - Engagement rate distribution
-- `data/plots/views_vs_engagement.png` - Views vs engagement correlation
-- `data/analysis_summary.txt` - Detailed statistics report
+*Complete analysis report available in `data/analysis_summary.txt`*
+
+### Generated Visualizations
+
+#### Top Channels by Views
+![Top Channels by Views](data/plots/top_channels_views.png)
+
+#### Engagement Rate Distribution
+![Engagement Rate Distribution](data/plots/engagement_distribution.png)
+
+#### Views vs Engagement Correlation
+![Views vs Engagement](data/plots/views_vs_engagement.png)
 
 ## API Considerations
 
