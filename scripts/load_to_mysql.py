@@ -49,7 +49,10 @@ def load_data_to_mysql():
         if not cursor.fetchone():
             raise Exception("youtube_videos table does not exist. Please run the database schema first.")
 
-        input_path = "../data/processed/youtube_clean.csv"
+        # Ensure directories exist
+        processed_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "processed")
+
+        input_path = os.path.join(processed_dir, "youtube_clean.csv")
         if not os.path.exists(input_path):
             raise FileNotFoundError(f"Input file not found: {input_path}")
 
@@ -62,15 +65,26 @@ def load_data_to_mysql():
 
         for index, row in df.iterrows():
             try:
+                # Convert datetime format for MySQL
+                published_at = str(row["published_at"]).replace('Z', '').replace('T', ' ')
+
                 cursor.execute(
                     """INSERT INTO youtube_videos
-                       (title, channel, views, likes, engagement_rate)
-                       VALUES (%s, %s, %s, %s, %s)""",
+                       (video_id, title, channel, published_at, views, likes, comments, category, engagement_rate)
+                       VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                       ON DUPLICATE KEY UPDATE
+                       title=VALUES(title), channel=VALUES(channel), published_at=VALUES(published_at),
+                       views=VALUES(views), likes=VALUES(likes), comments=VALUES(comments),
+                       category=VALUES(category), engagement_rate=VALUES(engagement_rate)""",
                     (
+                        str(row["video_id"]),
                         str(row["title"])[:255],  # Truncate title if too long
                         str(row["channel"])[:255],  # Truncate channel if too long
+                        published_at,
                         int(row["views"]),
                         int(row["likes"]),
+                        int(row["comments"]),
+                        str(row.get("category", "trending")),
                         float(row["engagement_rate"])
                     )
                 )

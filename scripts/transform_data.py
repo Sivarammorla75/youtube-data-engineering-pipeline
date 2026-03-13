@@ -23,8 +23,13 @@ def transform_data():
     try:
         logging.info("Starting data transformation")
 
-        input_path = "../data/raw/youtube_raw.csv"
-        output_path = "../data/processed/youtube_clean.csv"
+        # Ensure directories exist
+        raw_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "raw")
+        processed_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "processed")
+        os.makedirs(processed_dir, exist_ok=True)
+
+        input_path = os.path.join(raw_dir, "youtube_raw.csv")
+        output_path = os.path.join(processed_dir, "youtube_clean.csv")
 
         if not os.path.exists(input_path):
             raise FileNotFoundError(f"Input file not found: {input_path}")
